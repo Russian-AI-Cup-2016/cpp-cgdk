@@ -1,0 +1,47 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+/wipe.bat
+/UpgradeLog*.*
+/_UpgradeReport_Files
+/ipch
+/cpp-cgdk.VC.ncb
+/cpp-cgdk*.ncb
+/cpp-cgdk*.sdf
+/cpp-cgdk*.suo
+/cpp-cgdk*.vcproj.user
+/cpp-cgdk*.vcproj.*.user
+/cpp-cgdk*.vcxproj.user
+/cpp-cgdk*.vcxproj.*.user
+
+# Mac 
+MyStrategy.xcodeproj
+MyStrategy.xcworkspace
+build
+obj
+
+*.xcworkspace
+xuserdata
+*.xcuserdatad
+
+/cpp-cgdk.VC.db
+/.vs
