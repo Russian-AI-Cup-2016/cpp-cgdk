@@ -732,7 +732,7 @@ int32 CSimpleSocket::Receive(int32 nMaxBytes)
     // Free existing buffer and allocate a new buffer the size of
     // nMaxBytes.
     //--------------------------------------------------------------------------
-    if ((m_pBuffer != NULL) && (nMaxBytes != m_nBufferSize))
+    if ((m_pBuffer != NULL) && (nMaxBytes > m_nBufferSize))
     {
         delete [] m_pBuffer;
         m_pBuffer = NULL;
