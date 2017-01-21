@@ -113,7 +113,7 @@ private:
     double readDouble();
     void writeDouble(double value);
 
-    std::vector<signed char> readBytes(unsigned int byteCount);
+    void readBytes(unsigned int byteCount, signed char* bytes);
     void writeBytes(const std::vector<signed char>& bytes);
 
     static bool isLittleEndianMachine();
