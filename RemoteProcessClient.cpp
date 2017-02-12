@@ -1055,7 +1055,9 @@ vector<signed char> RemoteProcessClient::readByteArray() {
         return vector<signed char>();
     }
 
-    return readBytes(count);
+    std::vector<signed char> result(count);
+    readBytes(count, &result[0]);
+    return result;
 }
 
 void RemoteProcessClient::writeByteArray(const vector<signed char>& value) {
@@ -1064,7 +1066,9 @@ void RemoteProcessClient::writeByteArray(const vector<signed char>& value) {
 }
 
 template <typename E> E RemoteProcessClient::readEnum() {
-    return static_cast<E>(this->readBytes(1)[0]);
+    signed char result;
+    readBytes(1, &result);
+    return E(result);
 }
 
 template <typename E> vector<E> RemoteProcessClient::readEnumArray() {
@@ -1142,7 +1146,8 @@ string RemoteProcessClient::readString() {
         return "";
     }
 
-    vector<signed char> bytes = this->readBytes(length);
+    vector<signed char> bytes(length);
+    readBytes(length, &bytes[0]);
     return string(reinterpret_cast<char*>(&bytes[0]), length);
 }
 
@@ -1166,7 +1171,9 @@ bool RemoteProcessClient::readBoolean() {
         cachedBoolFlag = false;
         return cachedBoolValue;
     }
-    return this->readBytes(1)[0] != 0;
+    signed char result;
+    readBytes(1, &result);
+    return bool(result);
 }
 
 void RemoteProcessClient::writeBoolean(bool value) {
@@ -1176,17 +1183,15 @@ void RemoteProcessClient::writeBoolean(bool value) {
 }
 
 int RemoteProcessClient::readInt() {
-    vector<signed char> bytes = this->readBytes(INTEGER_SIZE_BYTES);
+    int result;
+
+    readBytes(INTEGER_SIZE_BYTES, reinterpret_cast<signed char*>(&result));
 
     if (this->isLittleEndianMachine() != LITTLE_ENDIAN_BYTE_ORDER) {
-        reverse(bytes.begin(), bytes.end());
+        reverse(reinterpret_cast<signed char*>(&result), reinterpret_cast<signed char*>(&result) + INTEGER_SIZE_BYTES);
     }
 
-    int value;
-
-    memcpy(&value, &bytes[0], INTEGER_SIZE_BYTES);
-
-    return value;
+    return result;
 }
 
 vector<int> RemoteProcessClient::readIntArray() {
@@ -1261,17 +1266,15 @@ void RemoteProcessClient::writeIntArray2D(const vector<vector<int> >& value) {
 }
 
 long long RemoteProcessClient::readLong() {
-    vector<signed char> bytes = this->readBytes(LONG_SIZE_BYTES);
+    long long result = 0;
+
+    readBytes(LONG_SIZE_BYTES, reinterpret_cast<signed char*>(&result));
 
     if (this->isLittleEndianMachine() != LITTLE_ENDIAN_BYTE_ORDER) {
-        reverse(bytes.begin(), bytes.end());
+        reverse(reinterpret_cast<signed char*>(&result), reinterpret_cast<signed char*>(&result) + LONG_SIZE_BYTES);
     }
 
-    long long value;
-
-    memcpy(&value, &bytes[0], LONG_SIZE_BYTES);
-
-    return value;
+    return result;
 }
 
 void RemoteProcessClient::writeLong(long long value) {
@@ -1295,8 +1298,7 @@ void RemoteProcessClient::writeDouble(double value) {
     this->writeLong(*reinterpret_cast<long long*>(&value));
 }
 
-vector<signed char> RemoteProcessClient::readBytes(unsigned int byteCount) {
-    vector<signed char> bytes(byteCount);
+void RemoteProcessClient::readBytes(unsigned int byteCount, signed char *bytes) {
     unsigned int offset = 0;
     int receivedByteCount;
 
@@ -1308,8 +1310,6 @@ vector<signed char> RemoteProcessClient::readBytes(unsigned int byteCount) {
     if (offset != byteCount) {
         exit(10012);
     }
-
-    return bytes;
 }
 
 void RemoteProcessClient::writeBytes(const vector<signed char>& bytes) {
